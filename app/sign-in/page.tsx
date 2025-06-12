@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button"
 const Page = () => {
   return (
     <div>
-      <h1 className='text-2xl underline'>Welcome to my Saas App - TUTORIUM</h1>
-      <Button>Click Me</Button>
+      <h1 className='text-2xl underline'>Sign In Page</h1>
+      <Button>Lets' Start</Button>
     </div>
   )
 }
