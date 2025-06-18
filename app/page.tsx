@@ -4,43 +4,31 @@ import CompanionCard from '@/components/CompanionCard'
 import CompanionsList from '@/components/CompanionsList'
 import Cta from '@/components/CTA'
 import { recentSessions } from '@/constants'
+import { getAllCompanion, getRecentSessions } from '@/lib/actions/companion.actions'
+import { getSubjectColor } from '@/lib/utils'
 
-const Page = () => {
+const Page =  async () => {
+  const companions = await getAllCompanion({limit: 3})
+  const recentSessionCompanions = await getRecentSessions()
   return (
     <main>
       <h1 className='text-2xl underline'>Popular Companions</h1>
       
       <section className='home-section'>
-        <CompanionCard 
-          id = "123" 
-          name = "Neura the Brain Explorer"
-          topic = "Neural Network of the Brain"
-          subject = "science"
-          duration = {45}
-          color = "#ffda6e"
-        />
-        <CompanionCard 
-          id = "456" 
-          name = "Countsy the Number Wizard"
-          topic = "Derivatives & Integrals"
-          subject = "Maths"
-          duration = {30}
-          color = "#e5d0ff"
-        />
-        <CompanionCard 
-          id = "789" 
-          name = "Verba the Vocabulary Builder"
-          topic = "language"
-          subject = "English literacture"
-          duration = {30}
-          color = "#BDE7FF"
-        />
+        {companions.map((companion) =>(
+          <CompanionCard 
+            key={companion.id}
+            {...companion}
+            color={getSubjectColor(companion.subject)}
+          />
+        ))}
+
       </section>
 
       <section className='home-section'>
         <CompanionsList 
           title= "Recently completed sessions"
-          companions= {recentSessions}
+          companions= {recentSessionCompanions}
           classNames="overflow-x-auto"
         />
         <Cta />

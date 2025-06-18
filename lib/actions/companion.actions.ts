@@ -3,6 +3,10 @@
 import { auth } from "@clerk/nextjs/server"
 import { createSupabaseClient } from "../supabase"
 import { error } from "console"
+import { fa, tr } from "zod/v4/locales"
+import { SrvRecord } from "dns"
+import { Ruthie } from "next/font/google"
+import { SaudiRiyal } from "lucide-react"
 
 export const createCompanion = async(formData: CreateCompanion) => {
     const { userId: author } = await auth()
@@ -53,3 +57,68 @@ export const getCompanion = async (id: string) => {
 
   return data;
 };
+
+export const addToSessionHistory = async (companionId: string) => {
+  const { userId } = await auth()
+  const supabase = createSupabaseClient()
+  const { data, error } = await supabase.from('session_history').insert({
+    companion_id : companionId,
+    user_id: userId,
+  })
+
+  if(error) throw new Error(error.message)
+
+  return data
+
+}
+
+export const getRecentSessions = async(limit = 10) => {
+  const supabase = createSupabaseClient()
+  const { data, error } = await supabase.from('session_history').select(`companions:companion_id (*)`).order('created_at', {ascending: false}).limit(limit)
+
+  if(error) throw new Error(error.message)
+
+  return data.map(({companions}) => companions)
+}
+
+export const getUserSessions = async(UserId: string, limit = 10) => {
+  const supabase = createSupabaseClient()
+  const { data, error } = await supabase.from('session_history').select(`companions:companion_id (*)`).eq('user_id', UserId).order('created_at', {ascending: false}).limit(limit)
+
+  if(error) throw new Error(error.message)
+
+  return data.map(({companions}) => companions)
+}
+
+export const getuserCompanions = async(UserId: string) => {
+  const supabase = createSupabaseClient()
+  const { data, error } = await supabase.from('companions').select().eq('author', UserId)
+  if(error) throw new Error(error.message)
+
+  return data
+}
+
+export const newCompanionPermissions = async () => {
+  const {userId, has} = await auth()
+  const supabase = createSupabaseClient()
+
+  let limit = 0
+
+  if(has({plan: 'pro'})){
+    return true
+  }else if(has({feature: "3_active_companions"})){
+    limit = 3
+  }else if(has({feature: "10_active_companions"})){
+    limit = 10
+  }
+
+  const {data, error} = await supabase.from('companions').select('id', {count: 'exact'}).eq('author', userId)
+
+  if(error) throw new Error(error.message)
+
+  const companionCount =  data.length
+
+  if(companionCount >= limit){
+    return false
+  }else return true
+}
