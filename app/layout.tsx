@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import {ClerkProvider} from '@clerk/nextjs'
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -27,6 +28,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Analytics />
+          <SpeedInsights />
         </ClerkProvider>
       </body>
     </html>
