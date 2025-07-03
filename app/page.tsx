@@ -1,19 +1,21 @@
+export const dynamic = 'force-dynamic'
+
 import React from 'react'
 import { Button } from "@/components/ui/button"
 import CompanionCard from '@/components/CompanionCard'
 import CompanionsList from '@/components/CompanionsList'
 import Cta from '@/components/CTA'
-import { recentSessions } from '@/constants'
 import { getAllCompanion, getRecentSessions } from '@/lib/actions/companion.actions'
 import { getSubjectColor } from '@/lib/utils'
 
 const Page =  async () => {
   const companions = await getAllCompanion({limit: 3})
   const recentSessionCompanions = await getRecentSessions()
+
   return (
     <main>
       <h1 className='text-2xl underline'>Popular Companions</h1>
-      
+
       <section className='home-section'>
         {companions.map((companion) =>(
           <CompanionCard 
@@ -22,7 +24,6 @@ const Page =  async () => {
             color={getSubjectColor(companion.subject)}
           />
         ))}
-
       </section>
 
       <section className='home-section'>
